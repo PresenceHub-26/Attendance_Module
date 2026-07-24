@@ -1,11 +1,9 @@
 package com.example.attendancemodule.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,19 +13,23 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.attendancemodule.R;
-import com.example.attendancemodule.database.DatabaseHelper;
-import com.example.attendancemodule.utils.DateTimeUtils;
+import com.example.attendancemodule.fragments.AttendanceFragment;
+import com.example.attendancemodule.fragments.DashboardFragment;
+import com.example.attendancemodule.fragments.ReportFragment;
+import com.example.attendancemodule.fragments.StudentListFragment;
 import com.example.attendancemodule.utils.SessionManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
-    private DatabaseHelper db;
     private SessionManager session;
-    private TextView tvTotal, tvPresent, tvAbsent, tvRate, tvWelcome;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +43,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         }
 
         setContentView(R.layout.activity_dashboard);
-        db = new DatabaseHelper(this);
 
         initViews();
         setupNavigation();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateStats();
+        
+        // Load default fragment
+        if (savedInstanceState == null) {
+            loadFragment(new DashboardFragment(), "Dashboard");
+        }
     }
 
     private void initViews() {
@@ -58,19 +58,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-        tvTotal = findViewById(R.id.tvDashTotal);
-        tvPresent = findViewById(R.id.tvDashPresent);
-        tvAbsent = findViewById(R.id.tvDashAbsent);
-        tvRate = findViewById(R.id.tvDashRate);
-        tvWelcome = findViewById(R.id.tvWelcomeHeader);
+        bottomNav = findViewById(R.id.bottomNavigation);
 
-        tvWelcome.setText("Welcome, " + session.getUsername());
-
-        findViewById(R.id.btnMarkAttendance).setOnClickListener(v -> 
-                startActivity(new Intent(this, AttendanceActivity.class)));
-
-        findViewById(R.id.btnViewAnalytics).setOnClickListener(v -> 
-                startActivity(new Intent(this, ReportActivity.class)));
+        findViewById(R.id.fabAddMain).setOnClickListener(v -> 
+                startActivity(new Intent(this, AddStudentActivity.class)));
     }
 
     private void setupNavigation() {
@@ -81,28 +72,34 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 findViewById(R.id.toolbar), R.string.open_drawer, R.string.close_drawer);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_dashboard) {
+                loadFragment(new DashboardFragment(), "Dashboard");
+            } else if (id == R.id.nav_students) {
+                loadFragment(new StudentListFragment(), "Students");
+            } else if (id == R.id.nav_attendance) {
+                loadFragment(new AttendanceFragment(), "Attendance");
+            } else if (id == R.id.nav_reports) {
+                loadFragment(new ReportFragment(), "Reports");
+            }
+            return true;
+        });
     }
 
-    private void updateStats() {
-        String today = DateTimeUtils.getCurrentDate();
-        Cursor c = db.getDashboardStats(today);
-        
-        if (c != null && c.moveToFirst()) {
-            int tot = c.getInt(c.getColumnIndexOrThrow("total"));
-            int pre = c.getInt(c.getColumnIndexOrThrow("present"));
-            int abs = c.getInt(c.getColumnIndexOrThrow("absent"));
-
-            tvTotal.setText(String.valueOf(tot));
-            tvPresent.setText(String.valueOf(pre));
-            tvAbsent.setText(String.valueOf(abs));
-
-            if (tot > 0) {
-                tvRate.setText(((pre * 100) / tot) + "%");
-            } else {
-                tvRate.setText("0%");
-            }
-            c.close();
+    private void loadFragment(Fragment fragment, String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
         }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
+    }
+
+    public void switchTab(int id) {
+        bottomNav.setSelectedItemId(id);
     }
 
     @Override
@@ -120,6 +117,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             session.setThemeMode(mode);
             recreate();
             return true;
+        } else if (item.getItemId() == R.id.action_logout) {
+            logout();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -128,24 +128,37 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_students) {
-            startActivity(new Intent(this, StudentListActivity.class));
+            loadFragment(new StudentListFragment(), "Students");
+            bottomNav.setSelectedItemId(R.id.nav_students);
         } else if (id == R.id.nav_attendance) {
-            startActivity(new Intent(this, AttendanceActivity.class));
+            loadFragment(new AttendanceFragment(), "Attendance");
+            bottomNav.setSelectedItemId(R.id.nav_attendance);
         } else if (id == R.id.nav_reports) {
-            startActivity(new Intent(this, ReportActivity.class));
+            loadFragment(new ReportFragment(), "Reports");
+            bottomNav.setSelectedItemId(R.id.nav_reports);
+        } else if (id == R.id.nav_dashboard) {
+            loadFragment(new DashboardFragment(), "Dashboard");
+            bottomNav.setSelectedItemId(R.id.nav_dashboard);
         } else if (id == R.id.nav_logout) {
-            session.logout();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+            logout();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void logout() {
+        session.logout();
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (bottomNav.getSelectedItemId() != R.id.nav_dashboard) {
+            bottomNav.setSelectedItemId(R.id.nav_dashboard);
         } else {
             super.onBackPressed();
         }
