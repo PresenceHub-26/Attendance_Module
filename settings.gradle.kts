@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Attendance Module"
 include(":app")
- 
+include(":app")

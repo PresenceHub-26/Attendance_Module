@@ -10,17 +10,27 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AttendanceModule">
+        android:theme="@style/Theme.AttendanceModule"
+        tools:targetApi="31">
+
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:name="com.example.studentmanagement.EditStudentActivity"
+            android:exported="false"
+            android:parentActivityName="com.example.studentmanagement.MainActivity"/>
+
+        <activity
+            android:name="com.example.studentmanagement.AddStudentActivity"
+            android:exported="false"
+            android:parentActivityName="com.example.studentmanagement.MainActivity"/>
+
+        <activity
+            android:name="com.example.studentmanagement.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+    </application>
 </manifest>
