@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,6 +17,7 @@
         tools:targetApi="31">
 
         <activity
+<<<<<<< Updated upstream
             android:name="com.example.studentmanagement.EditStudentActivity"
             android:exported="false"
             android:parentActivityName="com.example.studentmanagement.MainActivity"/>
@@ -25,12 +29,35 @@
 
         <activity
             android:name="com.example.studentmanagement.MainActivity"
+=======
+            android:name=".activities.SplashActivity"
+>>>>>>> Stashed changes
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< Updated upstream
+=======
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activities.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudentListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ReportActivity"
+            android:exported="false" />
+    </application>
+>>>>>>> Stashed changes
 
     </application>
 </manifest>

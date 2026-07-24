@@ -1,0 +1,7 @@
+- `[x]` Update `MainActivity.java`
+- `[x]` Delete redundant Java packages (`adapters`, `constants`, `database`, `models`, `utils`)
+- `[x]` Delete redundant Activity classes
+- `[x]` Delete redundant Layout XML files
+- `[x]` Delete redundant Menu resources
+- `[x]` Clean up `strings.xml`
+- `[x]` Verify build
