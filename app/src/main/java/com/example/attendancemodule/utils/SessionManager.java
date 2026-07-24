@@ -2,46 +2,42 @@ package com.example.attendancemodule.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.example.attendancemodule.constants.AppConstants;
 
 public class SessionManager {
-    private static final String PREF_NAME = "AttendanceSession";
-    private static final String IS_LOGGED_IN = "IsLoggedIn";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_NIGHT_MODE = "NightMode";
-
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
     public SessionManager(Context context) {
-        pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        pref = context.getSharedPreferences(AppConstants.PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 
-    public void setNightMode(int mode) {
-        editor.putInt(KEY_NIGHT_MODE, mode);
-        editor.commit();
-    }
-
-    public int getNightMode() {
-        return pref.getInt(KEY_NIGHT_MODE, -1); // Default to -1 (system/not set)
-    }
-
-    public void createLoginSession(String username) {
-        editor.putBoolean(IS_LOGGED_IN, true);
-        editor.putString(KEY_USERNAME, username);
-        editor.commit();
+    public void createLoginSession(String user) {
+        editor.putBoolean(AppConstants.KEY_IS_LOGGED_IN, true);
+        editor.putString(AppConstants.KEY_LOGGED_IN_USER, user);
+        editor.apply();
     }
 
     public boolean isLoggedIn() {
-        return pref.getBoolean(IS_LOGGED_IN, false);
+        return pref.getBoolean(AppConstants.KEY_IS_LOGGED_IN, false);
     }
 
     public String getUsername() {
-        return pref.getString(KEY_USERNAME, null);
+        return pref.getString(AppConstants.KEY_LOGGED_IN_USER, "Admin");
     }
 
-    public void logoutUser() {
+    public void setThemeMode(int mode) {
+        editor.putInt(AppConstants.KEY_NIGHT_MODE, mode);
+        editor.apply();
+    }
+
+    public int getThemeMode() {
+        return pref.getInt(AppConstants.KEY_NIGHT_MODE, -1);
+    }
+
+    public void logout() {
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 }
