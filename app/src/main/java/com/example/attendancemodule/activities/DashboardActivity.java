@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -15,22 +16,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.attendancemodule.MainActivity;
 import com.example.attendancemodule.R;
 import com.example.attendancemodule.database.DatabaseHelper;
+import com.example.attendancemodule.utils.DateTimeUtils;
 import com.example.attendancemodule.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private DrawerLayout drawerLayout;
-    private DatabaseHelper dbHelper;
+    private DrawerLayout drawer;
+    private DatabaseHelper db;
     private SessionManager session;
-    private TextView tvTotal, tvPresent, tvAbsent, tvRate;
+    private TextView tvTotal, tvPresent, tvAbsent, tvRate, tvWelcome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +41,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         }
 
         setContentView(R.layout.activity_dashboard);
-
-        dbHelper = new DatabaseHelper(this);
+        db = new DatabaseHelper(this);
 
         initViews();
         setupNavigation();
@@ -54,54 +50,58 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     protected void onResume() {
         super.onResume();
-        updateStatistics();
+        updateStats();
     }
 
     private void initViews() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         tvTotal = findViewById(R.id.tvDashTotal);
         tvPresent = findViewById(R.id.tvDashPresent);
         tvAbsent = findViewById(R.id.tvDashAbsent);
         tvRate = findViewById(R.id.tvDashRate);
+        tvWelcome = findViewById(R.id.tvWelcomeHeader);
 
-        findViewById(R.id.btnGoToAttendance).setOnClickListener(v -> {
-            startActivity(new Intent(DashboardActivity.this, MainActivity.class));
-        });
+        tvWelcome.setText("Welcome, " + session.getUsername());
+
+        findViewById(R.id.btnMarkAttendance).setOnClickListener(v -> 
+                startActivity(new Intent(this, AttendanceActivity.class)));
+
+        findViewById(R.id.btnViewAnalytics).setOnClickListener(v -> 
+                startActivity(new Intent(this, ReportActivity.class)));
     }
 
     private void setupNavigation() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        NavigationView nav = findViewById(R.id.nav_view);
+        nav.setNavigationItemSelectedListener(this);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, 
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, 
                 findViewById(R.id.toolbar), R.string.open_drawer, R.string.close_drawer);
-        drawerLayout.addDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
     }
 
-    private void updateStatistics() {
-        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        Cursor cursor = dbHelper.getAttendanceSummary(today);
+    private void updateStats() {
+        String today = DateTimeUtils.getCurrentDate();
+        Cursor c = db.getDashboardStats(today);
         
-        if (cursor != null && cursor.moveToFirst()) {
-            int total = cursor.getInt(cursor.getColumnIndexOrThrow("total"));
-            int present = cursor.getInt(cursor.getColumnIndexOrThrow("present"));
-            int absent = cursor.getInt(cursor.getColumnIndexOrThrow("absent"));
+        if (c != null && c.moveToFirst()) {
+            int tot = c.getInt(c.getColumnIndexOrThrow("total"));
+            int pre = c.getInt(c.getColumnIndexOrThrow("present"));
+            int abs = c.getInt(c.getColumnIndexOrThrow("absent"));
 
-            tvTotal.setText(String.valueOf(total));
-            tvPresent.setText(String.valueOf(present));
-            tvAbsent.setText(String.valueOf(absent));
+            tvTotal.setText(String.valueOf(tot));
+            tvPresent.setText(String.valueOf(pre));
+            tvAbsent.setText(String.valueOf(abs));
 
-            if (total > 0) {
-                int rate = (present * 100) / total;
-                tvRate.setText(rate + "%");
+            if (tot > 0) {
+                tvRate.setText(((pre * 100) / tot) + "%");
             } else {
                 tvRate.setText("0%");
             }
-            cursor.close();
+            c.close();
         }
     }
 
@@ -114,61 +114,38 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_dark_mode) {
-            toggleDarkMode();
-            return true;
-        } else if (item.getItemId() == R.id.action_reports) {
-            startActivity(new Intent(this, ReportActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.action_logout) {
-            logout();
+            int mode = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) 
+                    ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
+            AppCompatDelegate.setDefaultNightMode(mode);
+            session.setThemeMode(mode);
+            recreate();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void toggleDarkMode() {
-        int nightMode = AppCompatDelegate.getDefaultNightMode();
-        int newMode;
-        if (nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
-            newMode = AppCompatDelegate.MODE_NIGHT_NO;
-        } else {
-            newMode = AppCompatDelegate.MODE_NIGHT_YES;
-        }
-        AppCompatDelegate.setDefaultNightMode(newMode);
-        session.setNightMode(newMode);
-        recreate();
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.nav_dashboard) {
-            // Already here
-        } else if (id == R.id.nav_students) {
+        if (id == R.id.nav_students) {
             startActivity(new Intent(this, StudentListActivity.class));
         } else if (id == R.id.nav_attendance) {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, AttendanceActivity.class));
         } else if (id == R.id.nav_reports) {
             startActivity(new Intent(this, ReportActivity.class));
         } else if (id == R.id.nav_logout) {
-            logout();
+            session.logout();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void logout() {
-        session.logoutUser();
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
     }
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
