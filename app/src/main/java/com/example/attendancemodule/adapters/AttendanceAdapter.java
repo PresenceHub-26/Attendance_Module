@@ -18,79 +18,80 @@ import java.util.List;
 
 public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.ViewHolder> {
 
-    private final List<Student> studentList;
-    private final List<Student> filteredList;
+    private List<Student> students;
+    private List<Student> filtered;
 
-    public AttendanceAdapter(List<Student> studentList) {
-        this.studentList = studentList;
-        this.filteredList = new ArrayList<>(studentList);
+    public AttendanceAdapter(List<Student> students) {
+        this.students = students;
+        this.filtered = new ArrayList<>(students);
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_student, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_student, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Student student = filteredList.get(position);
-        holder.tvName.setText(student.getName());
+        Student s = filtered.get(position);
+        holder.tvName.setText(s.getFullName());
+        holder.tvId.setText("ID: " + s.getStudentId());
 
-        // Reset toggle state to avoid recycling issues
-        holder.radioGroup.setOnCheckedChangeListener(null);
-        if ("Present".equals(student.getStatus())) {
-            holder.radioGroup.check(R.id.rbPresent);
-        } else if ("Absent".equals(student.getStatus())) {
-            holder.radioGroup.check(R.id.rbAbsent);
-        } else {
-            holder.radioGroup.clearCheck();
+        holder.rg.setOnCheckedChangeListener(null);
+        holder.rg.clearCheck();
+        
+        if ("Present".equals(s.getStatus())) {
+            holder.rbP.setChecked(true);
+        } else if ("Absent".equals(s.getStatus())) {
+            holder.rbA.setChecked(true);
         }
 
-        holder.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+        holder.rg.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rbPresent) {
-                student.setStatus("Present");
+                s.setStatus("Present");
             } else if (checkedId == R.id.rbAbsent) {
-                student.setStatus("Absent");
-            } else {
-                student.setStatus("");
+                s.setStatus("Absent");
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return filteredList.size();
+        return filtered.size();
     }
 
     public void filter(String query) {
-        filteredList.clear();
+        filtered.clear();
         if (query.isEmpty()) {
-            filteredList.addAll(studentList);
+            filtered.addAll(students);
         } else {
-            String lowerCaseQuery = query.toLowerCase();
-            for (Student student : studentList) {
-                if (student.getName().toLowerCase().contains(lowerCaseQuery)) {
-                    filteredList.add(student);
+            String q = query.toLowerCase();
+            for (Student s : students) {
+                if (s.getFullName().toLowerCase().contains(q) || s.getStudentId().toLowerCase().contains(q)) {
+                    filtered.add(s);
                 }
             }
         }
         notifyDataSetChanged();
     }
 
-    public List<Student> getAllStudents() {
-        return studentList;
+    public List<Student> getStudents() {
+        return students;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName;
-        RadioGroup radioGroup;
+        TextView tvName, tvId;
+        RadioGroup rg;
+        RadioButton rbP, rbA;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvStudentName);
-            radioGroup = itemView.findViewById(R.id.rgStatus);
+            tvId = itemView.findViewById(R.id.tvStudentId);
+            rg = itemView.findViewById(R.id.rgStatus);
+            rbP = itemView.findViewById(R.id.rbPresent);
+            rbA = itemView.findViewById(R.id.rbAbsent);
         }
     }
 }

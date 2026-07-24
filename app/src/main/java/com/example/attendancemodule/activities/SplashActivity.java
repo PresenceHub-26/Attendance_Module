@@ -3,6 +3,7 @@ package com.example.attendancemodule.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.animation.AlphaAnimation;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -17,12 +18,17 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SessionManager session = new SessionManager(this);
-        int savedMode = session.getNightMode();
-        if (savedMode != -1) {
-            AppCompatDelegate.setDefaultNightMode(savedMode);
+        int themeMode = session.getThemeMode();
+        if (themeMode != -1) {
+            AppCompatDelegate.setDefaultNightMode(themeMode);
         }
 
         setContentView(R.layout.activity_splash);
+
+        AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn.setDuration(1500);
+        findViewById(R.id.ivLogo).startAnimation(fadeIn);
+        findViewById(R.id.tvAppName).startAnimation(fadeIn);
 
         new Handler().postDelayed(() -> {
             if (session.isLoggedIn()) {
@@ -31,6 +37,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             }
             finish();
-        }, 3000); 
+        }, 2500);
     }
 }
