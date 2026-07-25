@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.CardView.Elevated"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    app:cardElevation="2dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,37 +18,49 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Student Name"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tvStudentId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="ID: 001"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvStudentName" />
+
         <RadioGroup
             android:id="@+id/rgStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvStudentName">
+            app:layout_constraintTop_toBottomOf="@id/tvStudentId">
 
             <RadioButton
                 android:id="@+id/rbPresent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:buttonTint="@color/present_color_selector"
-                android:textColor="@color/present_color_selector"
-                android:text="Present" />
+                app:buttonTint="@color/selector_present"
+                android:text="Present"
+                android:textColor="?attr/colorOnSurface" />
 
             <RadioButton
                 android:id="@+id/rbAbsent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                app:buttonTint="@color/absent_color_selector"
-                android:textColor="@color/absent_color_selector"
-                android:text="Absent" />
+                app:buttonTint="@color/selector_absent"
+                android:text="Absent"
+                android:textColor="?attr/colorOnSurface" />
 
         </RadioGroup>
 
