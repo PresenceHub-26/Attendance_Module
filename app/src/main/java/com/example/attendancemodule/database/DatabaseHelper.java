@@ -6,209 +6,282 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.attendancemodule.constants.AppConstants;
+import com.example.attendancemodule.models.AttendanceRecord;
 import com.example.attendancemodule.models.Student;
+import com.example.attendancemodule.models.User;
 
-import java.text.SimpleDateFormat;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "AttendanceDB";
-    private static final int DATABASE_VERSION = 2;
-
-    // Table names
-    private static final String TABLE_STUDENTS = "students";
-    private static final String TABLE_ATTENDANCE = "attendance";
-    private static final String TABLE_USERS = "users";
-
-    // Students table columns
-    private static final String KEY_STUDENT_ID = "id";
-    private static final String KEY_STUDENT_NAME = "name";
-
-    // Attendance table columns
-    private static final String KEY_ATT_ID = "id";
-    private static final String KEY_ATT_STUDENT_ID = "student_id";
-    private static final String KEY_ATT_DATE = "attendance_date";
-    private static final String KEY_ATT_STATUS = "status";
-
-    // Users table columns
-    private static final String KEY_USER_ID = "id";
-    private static final String KEY_USER_NAME = "username";
-    private static final String KEY_USER_PASS = "password";
-
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, AppConstants.DATABASE_NAME, null, AppConstants.DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_STUDENTS_TABLE = "CREATE TABLE " + TABLE_STUDENTS + "("
-                + KEY_STUDENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_STUDENT_NAME + " TEXT" + ")";
-        
-        String CREATE_ATTENDANCE_TABLE = "CREATE TABLE " + TABLE_ATTENDANCE + "("
-                + KEY_ATT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_ATT_STUDENT_ID + " INTEGER,"
-                + KEY_ATT_DATE + " TEXT,"
-                + KEY_ATT_STATUS + " TEXT" + ")";
+        db.execSQL("CREATE TABLE " + AppConstants.TABLE_USERS + " (" +
+                AppConstants.COL_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                AppConstants.COL_USERNAME + " TEXT UNIQUE, " +
+                AppConstants.COL_PASSWORD + " TEXT, " +
+                AppConstants.COL_USER_ROLE + " TEXT)");
 
-        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
-                + KEY_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_USER_NAME + " TEXT,"
-                + KEY_USER_PASS + " TEXT" + ")";
+        db.execSQL("CREATE TABLE " + AppConstants.TABLE_STUDENTS + " (" +
+                AppConstants.COL_STU_PK + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                AppConstants.COL_STU_ID + " TEXT UNIQUE, " +
+                AppConstants.COL_STU_NAME + " TEXT, " +
+                AppConstants.COL_STU_DEPT + " TEXT, " +
+                AppConstants.COL_STU_LEVEL + " TEXT, " +
+                AppConstants.COL_STU_PHONE + " TEXT)");
 
-        db.execSQL(CREATE_STUDENTS_TABLE);
-        db.execSQL(CREATE_ATTENDANCE_TABLE);
-        db.execSQL(CREATE_USERS_TABLE);
+        db.execSQL("CREATE TABLE " + AppConstants.TABLE_ATTENDANCE + " (" +
+                AppConstants.COL_ATT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                AppConstants.COL_ATT_STU_ID + " TEXT, " +
+                AppConstants.COL_ATT_DATE + " TEXT, " +
+                AppConstants.COL_ATT_STATUS + " TEXT, " +
+                AppConstants.COL_ATT_TIME + " TEXT)");
 
-        // Seed default admin user
-        ContentValues userValues = new ContentValues();
-        userValues.put(KEY_USER_NAME, "admin");
-        userValues.put(KEY_USER_PASS, "admin123");
-        db.insert(TABLE_USERS, null, userValues);
-
-        // Seed initial students
-        String[] dummyStudents = {"John Mensah", "Mary Owusu", "Kwame Boadu", "Akua Ansah", "Kofi Annan", "Ama Serwaa", "Yaw Osei", "Abena Appiah"};
-        for (String name : dummyStudents) {
-            ContentValues values = new ContentValues();
-            values.put(KEY_STUDENT_NAME, name);
-            db.insert(TABLE_STUDENTS, null, values);
-        }
+        ContentValues admin = new ContentValues();
+        admin.put(AppConstants.COL_USERNAME, "admin");
+        admin.put(AppConstants.COL_PASSWORD, "admin123");
+        admin.put(AppConstants.COL_USER_ROLE, AppConstants.ROLE_SUPER);
+        db.insert(AppConstants.TABLE_USERS, null, admin);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + AppConstants.TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + AppConstants.TABLE_STUDENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + AppConstants.TABLE_ATTENDANCE);
         onCreate(db);
     }
 
+    public boolean login(String u, String p) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(AppConstants.TABLE_USERS, null, AppConstants.COL_USERNAME + "=? AND " + AppConstants.COL_PASSWORD + "=?", new String[]{u, p}, null, null, null);
+        boolean s = c.getCount() > 0;
+        c.close();
+        return s;
+    }
+
+    public String getUserRole(String username) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(AppConstants.TABLE_USERS, new String[]{AppConstants.COL_USER_ROLE}, AppConstants.COL_USERNAME + "=?", new String[]{username}, null, null, null);
+        String role = AppConstants.ROLE_ADMIN;
+        if (c.moveToFirst()) {
+            role = c.getString(0);
+        }
+        c.close();
+        return role;
+    }
+
+    public boolean updatePassword(String user, String oldPass, String newPass) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.query(AppConstants.TABLE_USERS, null, AppConstants.COL_USERNAME + "=? AND " + AppConstants.COL_PASSWORD + "=?", new String[]{user, oldPass}, null, null, null);
+        if (c.getCount() > 0) {
+            c.close();
+            ContentValues v = new ContentValues();
+            v.put(AppConstants.COL_PASSWORD, newPass);
+            int rows = db.update(AppConstants.TABLE_USERS, v, AppConstants.COL_USERNAME + "=?", new String[]{user});
+            return rows > 0;
+        }
+        c.close();
+        return false;
+    }
+
+    public long addAdmin(String u, String p) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(AppConstants.COL_USERNAME, u);
+        v.put(AppConstants.COL_PASSWORD, p);
+        v.put(AppConstants.COL_USER_ROLE, AppConstants.ROLE_ADMIN);
+        return db.insert(AppConstants.TABLE_USERS, null, v);
+    }
+
+    public boolean deleteAdmin(String u) {
+        if ("admin".equals(u)) return false; // Prevent deleting super admin
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(AppConstants.TABLE_USERS, AppConstants.COL_USERNAME + "=?", new String[]{u}) > 0;
+    }
+
+    public List<User> getAllAdmins() {
+        List<User> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        // Exclude the logged-in super admin (usually 'admin')
+        Cursor c = db.query(AppConstants.TABLE_USERS, null, AppConstants.COL_USER_ROLE + "=?", new String[]{AppConstants.ROLE_ADMIN}, null, null, AppConstants.COL_USERNAME + " ASC");
+        if (c.moveToFirst()) {
+            do {
+                list.add(new User(
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_USERNAME)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_PASSWORD)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_USER_ROLE))
+                ));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+
+    public long insertStudent(Student s) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(AppConstants.COL_STU_ID, s.getStudentId());
+        v.put(AppConstants.COL_STU_NAME, s.getFullName());
+        v.put(AppConstants.COL_STU_DEPT, s.getDepartment());
+        v.put(AppConstants.COL_STU_LEVEL, s.getLevel());
+        v.put(AppConstants.COL_STU_PHONE, s.getPhone());
+        return db.insert(AppConstants.TABLE_STUDENTS, null, v);
+    }
+
+    public int updateStudent(Student s) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(AppConstants.COL_STU_NAME, s.getFullName());
+        v.put(AppConstants.COL_STU_DEPT, s.getDepartment());
+        v.put(AppConstants.COL_STU_LEVEL, s.getLevel());
+        v.put(AppConstants.COL_STU_PHONE, s.getPhone());
+        return db.update(AppConstants.TABLE_STUDENTS, v, AppConstants.COL_STU_ID + "=?", new String[]{s.getStudentId()});
+    }
+
+    public void deleteStudent(String id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(AppConstants.TABLE_STUDENTS, AppConstants.COL_STU_ID + "=?", new String[]{id});
+        db.delete(AppConstants.TABLE_ATTENDANCE, AppConstants.COL_ATT_STU_ID + "=?", new String[]{id});
+    }
+
     public List<Student> getAllStudents() {
-        List<Student> studentList = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_STUDENTS;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
+        List<Student> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + AppConstants.TABLE_STUDENTS + " ORDER BY " + AppConstants.COL_STU_NAME + " ASC", null);
+        if (c.moveToFirst()) {
             do {
-                Student student = new Student(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STUDENT_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(KEY_STUDENT_NAME))
-                );
-                studentList.add(student);
-            } while (cursor.moveToNext());
+                list.add(new Student(
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_STU_ID)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_STU_NAME)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_STU_DEPT)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_STU_LEVEL)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_STU_PHONE))
+                ));
+            } while (c.moveToNext());
         }
-        cursor.close();
-        return studentList;
+        c.close();
+        return list;
     }
 
-    public List<Student> searchStudents(String query) {
-        List<Student> studentList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_STUDENTS, new String[]{KEY_STUDENT_ID, KEY_STUDENT_NAME},
-                KEY_STUDENT_NAME + " LIKE ?", new String[]{"%" + query + "%"},
-                null, null, KEY_STUDENT_NAME + " ASC");
+    public boolean isStudentIdExists(String id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(AppConstants.TABLE_STUDENTS, null, AppConstants.COL_STU_ID + "=?", new String[]{id}, null, null, null);
+        boolean ex = c.getCount() > 0;
+        c.close();
+        return ex;
+    }
 
-        if (cursor.moveToFirst()) {
+    public long markAttendance(String id, String date, String status, String time) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(AppConstants.TABLE_ATTENDANCE, AppConstants.COL_ATT_STU_ID + "=? AND " + AppConstants.COL_ATT_DATE + "=?", new String[]{id, date});
+        ContentValues v = new ContentValues();
+        v.put(AppConstants.COL_ATT_STU_ID, id);
+        v.put(AppConstants.COL_ATT_DATE, date);
+        v.put(AppConstants.COL_ATT_STATUS, status);
+        v.put(AppConstants.COL_ATT_TIME, time);
+        return db.insert(AppConstants.TABLE_ATTENDANCE, null, v);
+    }
+
+    public Cursor getDashboardStats(String date) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT " +
+                "(SELECT COUNT(*) FROM " + AppConstants.TABLE_STUDENTS + ") as total, " +
+                "(SELECT COUNT(*) FROM " + AppConstants.TABLE_ATTENDANCE + " WHERE " + AppConstants.COL_ATT_DATE + "=? AND " + AppConstants.COL_ATT_STATUS + "='Present') as present, " +
+                "(SELECT COUNT(*) FROM " + AppConstants.TABLE_ATTENDANCE + " WHERE " + AppConstants.COL_ATT_DATE + "=? AND " + AppConstants.COL_ATT_STATUS + "='Absent') as absent",
+                new String[]{date, date});
+    }
+
+    public List<AttendanceRecord> getHistory(String query, String dateQ) {
+        List<AttendanceRecord> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        StringBuilder sql = new StringBuilder("SELECT s." + AppConstants.COL_STU_NAME + ", a.* FROM " + 
+                AppConstants.TABLE_STUDENTS + " s JOIN " + AppConstants.TABLE_ATTENDANCE + " a ON s." + 
+                AppConstants.COL_STU_ID + " = a." + AppConstants.COL_ATT_STU_ID);
+        
+        List<String> params = new ArrayList<>();
+        boolean hasFilter = false;
+
+        if (query != null && !query.isEmpty()) {
+            sql.append(" WHERE (s.").append(AppConstants.COL_STU_NAME).append(" LIKE ? OR s.")
+               .append(AppConstants.COL_STU_ID).append(" LIKE ?)");
+            params.add("%" + query + "%");
+            params.add("%" + query + "%");
+            hasFilter = true;
+        }
+
+        if (dateQ != null && !dateQ.isEmpty()) {
+            sql.append(hasFilter ? " AND " : " WHERE ").append("a.").append(AppConstants.COL_ATT_DATE).append(" = ?");
+            params.add(dateQ);
+        }
+        
+        sql.append(" ORDER BY a.").append(AppConstants.COL_ATT_DATE).append(" DESC, a.")
+           .append(AppConstants.COL_ATT_TIME).append(" DESC");
+           
+        Cursor c = db.rawQuery(sql.toString(), params.toArray(new String[0]));
+        if (c.moveToFirst()) {
             do {
-                Student student = new Student(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STUDENT_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(KEY_STUDENT_NAME))
-                );
-                studentList.add(student);
-            } while (cursor.moveToNext());
+                list.add(new AttendanceRecord(
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_ATT_STU_ID)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_STU_NAME)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_ATT_DATE)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_ATT_STATUS)),
+                        c.getString(c.getColumnIndexOrThrow(AppConstants.COL_ATT_TIME))
+                ));
+            } while (c.moveToNext());
         }
-        cursor.close();
-        return studentList;
+        c.close();
+        return list;
     }
 
-    public boolean addAttendance(int studentId, String status) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-        // Check if already exists for today
-        if (isAttendanceMarkedToday(studentId, date)) {
-            // Update existing
-            ContentValues values = new ContentValues();
-            values.put(KEY_ATT_STATUS, status);
-            return db.update(TABLE_ATTENDANCE, values, KEY_ATT_STUDENT_ID + " = ? AND " + KEY_ATT_DATE + " = ?",
-                    new String[]{String.valueOf(studentId), date}) > 0;
-        } else {
-            // Insert new
-            ContentValues values = new ContentValues();
-            values.put(KEY_ATT_STUDENT_ID, studentId);
-            values.put(KEY_ATT_DATE, date);
-            values.put(KEY_ATT_STATUS, status);
-            return db.insert(TABLE_ATTENDANCE, null, values) != -1;
-        }
-    }
-
-    public boolean isAttendanceMarkedToday(int studentId, String date) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_ATTENDANCE, new String[]{KEY_ATT_ID},
-                KEY_ATT_STUDENT_ID + " = ? AND " + KEY_ATT_DATE + " = ?",
-                new String[]{String.valueOf(studentId), date}, null, null, null);
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
-
-    public void seedStudents() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_STUDENTS, null);
-        cursor.moveToFirst();
-        int count = cursor.getInt(0);
-        cursor.close();
-
-        if (count == 0) {
-            String[] dummyStudents = {"John Mensah", "Mary Owusu", "Kwame Boadu", "Akua Ansah", "Kofi Annan", "Ama Serwaa", "Yaw Osei", "Abena Appiah"};
-            for (String name : dummyStudents) {
-                ContentValues values = new ContentValues();
-                values.put(KEY_STUDENT_NAME, name);
-                db.insert(TABLE_STUDENTS, null, values);
+    public String exportStudentsToJson() {
+        try {
+            List<Student> students = getAllStudents();
+            JSONArray array = new JSONArray();
+            for (Student s : students) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", s.getStudentId());
+                obj.put("name", s.getFullName());
+                obj.put("dept", s.getDepartment());
+                obj.put("level", s.getLevel());
+                obj.put("phone", s.getPhone());
+                array.put(obj);
             }
+            return array.toString();
+        } catch (Exception e) {
+            return null;
         }
     }
 
-    public boolean checkUser(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{KEY_USER_ID},
-                KEY_USER_NAME + " = ? AND " + KEY_USER_PASS + " = ?",
-                new String[]{username, password}, null, null, null);
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
-
-    public void deleteStudent(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_STUDENTS, KEY_STUDENT_ID + " = ?", new String[]{String.valueOf(id)});
-        db.delete(TABLE_ATTENDANCE, KEY_ATT_STUDENT_ID + " = ?", new String[]{String.valueOf(id)});
-    }
-
-    public Cursor getAttendanceSummary(String date) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT " +
-                "(SELECT COUNT(*) FROM " + TABLE_STUDENTS + ") as total, " +
-                "(SELECT COUNT(*) FROM " + TABLE_ATTENDANCE + " WHERE " + KEY_ATT_DATE + " = ? AND " + KEY_ATT_STATUS + " = 'Present') as present, " +
-                "(SELECT COUNT(*) FROM " + TABLE_ATTENDANCE + " WHERE " + KEY_ATT_DATE + " = ? AND " + KEY_ATT_STATUS + " = 'Absent') as absent";
-        return db.rawQuery(query, new String[]{date, date});
-    }
-
-    public Cursor getAttendanceHistory(String queryText) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT s." + KEY_STUDENT_NAME + ", a." + KEY_ATT_DATE + ", a." + KEY_ATT_STATUS + ", s." + KEY_STUDENT_ID +
-                " FROM " + TABLE_STUDENTS + " s " +
-                " JOIN " + TABLE_ATTENDANCE + " a ON s." + KEY_STUDENT_ID + " = a." + KEY_ATT_STUDENT_ID;
-
-        if (queryText != null && !queryText.isEmpty()) {
-            query += " WHERE s." + KEY_STUDENT_NAME + " LIKE ?";
-            return db.rawQuery(query, new String[]{"%" + queryText + "%"});
+    public int importStudentsFromJson(String json) {
+        int count = 0;
+        try {
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                Student s = new Student(
+                        obj.getString("id"),
+                        obj.getString("name"),
+                        obj.getString("dept"),
+                        obj.getString("level"),
+                        obj.getString("phone")
+                );
+                if (!isStudentIdExists(s.getStudentId())) {
+                    if (insertStudent(s) != -1) count++;
+                }
+            }
+        } catch (Exception e) {
+            return -1;
         }
-        return db.rawQuery(query, null);
+        return count;
     }
 }

@@ -1,7 +1,8 @@
-# Task: Modern UI & Theme Toggle
+# Task: Data Sharing Relocation & Sharing Fix
 
-- [x] Create Persistent Theme Toggle in Menu
-- [x] Fix Toolbar Icon/Overflow Visibility
-- [x] Apply Modern Material 3 Styles to Inputs
-- [x] Persist Theme Preference in SharedPreferences
-- [x] Verification
+- [x] Update `file_paths.xml` for secure cache sharing
+- [x] Refactor `fragment_account.xml` (Remove sharing section)
+- [x] Refactor `fragment_report.xml` (Add sharing section)
+- [x] Refactor `AccountFragment.java` (Cleanup sharing logic)
+- [x] Refactor `ReportFragment.java` (Implement sharing logic & fix "Share Student List")
+- [x] Verification and Polish

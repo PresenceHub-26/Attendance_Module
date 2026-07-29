@@ -1,5 +1,23 @@
 <resources>
-    <string name="app_name">Attendance Module</string>
+    <string name="app_name">Student Attendance System</string>
+    <string name="school_name">Premium International Academy</string>
     <string name="open_drawer">Open Navigation Drawer</string>
     <string name="close_drawer">Close Navigation Drawer</string>
+
+    <!-- Dashboard -->
+    <string name="dash_total">Total Students</string>
+    <string name="dash_present">Present Today</string>
+    <string name="dash_absent">Absent Today</string>
+    <string name="dash_rate">Attendance %</string>
+
+    <!-- Auth -->
+    <string name="login_welcome">Welcome Back</string>
+    <string name="login_subtitle">Secure login to access dashboard</string>
+    <string name="btn_login">SIGN IN</string>
+
+    <!-- Student CRUD -->
+    <string name="add_student">Add New Student</string>
+    <string name="edit_student">Update Student Records</string>
+    <string name="delete_student">Remove Student</string>
+    <string name="delete_confirm">Are you sure you want to delete this student? All history will be lost.</string>
 </resources>

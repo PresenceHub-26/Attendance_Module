@@ -1,29 +1,39 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.AttendanceModule" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorOnPrimary">@color/on_primary</item>
-        <item name="colorPrimaryContainer">@color/primary_light</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="colorPrimaryContainer">@color/primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/onPrimaryContainer</item>
 
-        <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondary</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorOnSecondary">@color/onSecondary</item>
+        <item name="colorSecondaryContainer">@color/secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/onSecondaryContainer</item>
 
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOnSurfaceVariant">@color/onSurfaceVariant</item>
 
-        <!-- Background & Surface -->
         <item name="android:windowBackground">@color/background</item>
         <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorOnSurface">@color/onSurface</item>
+        <item name="android:statusBarColor">@color/primary</item>
     </style>
 
     <style name="Theme.AttendanceModule" parent="Base.Theme.AttendanceModule" />
 
-    <!-- Toolbar Theme Overlay to make icons (including 3 dots) white -->
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="actionMenuTextColor">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="Widget.AttendanceModule.SearchBar" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">28dp</item>
+        <item name="boxCornerRadiusTopEnd">28dp</item>
+        <item name="boxCornerRadiusBottomStart">28dp</item>
+        <item name="boxCornerRadiusBottomEnd">28dp</item>
+        <item name="boxBackgroundColor">?attr/colorSurface</item>
+        <item name="hintEnabled">true</item>
+        <item name="startIconTint">?attr/colorPrimary</item>
+        <item name="boxStrokeColor">?attr/colorOutline</item>
     </style>
 </resources>

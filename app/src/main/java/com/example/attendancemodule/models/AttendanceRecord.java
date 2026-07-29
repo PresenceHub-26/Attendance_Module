@@ -1,31 +1,23 @@
 package com.example.attendancemodule.models;
 
 public class AttendanceRecord {
-    private int studentId;
-    private String studentName;
+    private String studentId;
+    private String fullName;
     private String date;
     private String status;
+    private String timeMarked;
 
-    public AttendanceRecord(int studentId, String studentName, String date, String status) {
+    public AttendanceRecord(String studentId, String fullName, String date, String status, String timeMarked) {
         this.studentId = studentId;
-        this.studentName = studentName;
+        this.fullName = fullName;
         this.date = date;
         this.status = status;
+        this.timeMarked = timeMarked;
     }
 
-    public int getStudentId() {
-        return studentId;
-    }
-
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public String getStatus() {
-        return status;
-    }
+    public String getStudentId() { return studentId; }
+    public String getFullName() { return fullName; }
+    public String getDate() { return date; }
+    public String getStatus() { return status; }
+    public String getTimeMarked() { return timeMarked; }
 }
