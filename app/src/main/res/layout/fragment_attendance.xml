@@ -17,7 +17,16 @@
             style="@style/Widget.AttendanceModule.SearchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+<<<<<<< Updated upstream
             android:layout_margin="16dp"
+=======
+<<<<<<< Updated upstream
+            android:layout_margin="16dp"
+=======
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             android:hint="Find student to mark"
             app:startIconDrawable="@drawable/ic_search">
 
@@ -29,6 +38,55 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginTop="12dp"
+            android:paddingHorizontal="16dp">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAll"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All Students"
+                    android:checked="true" />
+
+                <!-- Dept and Level chips will be added or handled programmatically if dynamic,
+                     but for "easy" marking let's add common class identifiers -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDept"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="By Department"
+                    app:chipIcon="@drawable/ic_attendance" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLevel"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="By Level"
+                    app:chipIcon="@drawable/ic_dashboard" />
+
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAttendance"
             android:layout_width="match_parent"
