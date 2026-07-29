@@ -1,158 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="?attr/android:windowBackground">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ToolbarTheme"
+            app:title="Add Student"
+            app:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_back" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="16dp">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                style="@style/Widget.Material3.CardView.Elevated">
 
-                <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add New Student"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="24dp"/>
-
-                <!-- Student ID Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilStudentId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Student ID"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="20"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etStudentId"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:maxLines="1"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Name Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Full Name"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:maxLines="1"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Department Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilDepartment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Department"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etDepartment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:maxLines="1"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Level Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilLevel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Level (e.g., 100, 200, 300)"
-                    app:helperText="Enter level as number"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etLevel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLines="1"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Phone Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:hint="Phone Number"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="15"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPhone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone"
-                        android:maxLines="1"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Buttons -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
-                    <Button
-                        android:id="@+id/btnCancel"
-                        android:layout_width="0dp"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilStudentId"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:text="Cancel"
-                        android:backgroundTint="#757575"
-                        style="@style/Widget.AppCompat.Button.Colored"/>
+                        android:hint="Student ID"
+                        app:startIconDrawable="@drawable/ic_badge">
 
-                    <Button
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etStudentId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Full Name"
+                        app:startIconDrawable="@drawable/ic_person">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Department"
+                        app:startIconDrawable="@drawable/ic_department">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etDepartment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Level"
+                        app:startIconDrawable="@drawable/ic_level">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLevel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Phone Number"
+                        app:startIconDrawable="@drawable/ic_phone">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSave"
-                        android:layout_width="0dp"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:text="Save Student"
-                        android:backgroundTint="@color/primary"
-                        style="@style/Widget.AppCompat.Button.Colored"/>
+                        android:layout_marginTop="32dp"
+                        android:padding="16dp"
+                        android:text="SAVE STUDENT"
+                        app:cornerRadius="8dp" />
+
                 </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-</ScrollView>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

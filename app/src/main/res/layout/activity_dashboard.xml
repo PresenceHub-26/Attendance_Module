@@ -14,8 +14,7 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/Theme.AttendanceModule">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -28,195 +27,47 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <!-- Fragment Container -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:paddingBottom="80dp"
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-            <LinearLayout
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:backgroundTint="?attr/colorSurface"
+            app:fabAlignmentMode="center"
+            app:fabCradleMargin="10dp"
+            app:fabCradleRoundedCornerRadius="12dp"
+            app:fabCradleVerticalOffset="10dp">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_height="match_parent"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                app:elevation="0dp"
+                app:menu="@menu/menu_bottom" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Overview Today"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:textColor="@color/primary"/>
+        </com.google.android.material.bottomappbar.BottomAppBar>
 
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:rowCount="2">
-
-                    <!-- Total Students -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_margin="8dp"
-                        style="@style/Widget.Material3.CardView.Elevated"
-                        app:cardCornerRadius="12dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:padding="20dp">
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:src="@android:drawable/ic_menu_myplaces"
-                                app:tint="@color/primary"/>
-                            <TextView
-                                android:id="@+id/tvDashTotal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="8dp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Total Students"
-                                android:textSize="12sp"
-                                android:alpha="0.7"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Present Today -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_margin="8dp"
-                        style="@style/Widget.Material3.CardView.Elevated"
-                        app:cardCornerRadius="12dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:padding="20dp">
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:src="@android:drawable/checkbox_on_background"
-                                app:tint="@color/green"/>
-                            <TextView
-                                android:id="@+id/tvDashPresent"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="8dp"
-                                android:textColor="@color/green"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Present Today"
-                                android:textSize="12sp"
-                                android:alpha="0.7"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Absent Today -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_margin="8dp"
-                        style="@style/Widget.Material3.CardView.Elevated"
-                        app:cardCornerRadius="12dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:padding="20dp">
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:src="@android:drawable/ic_delete"
-                                app:tint="@color/red"/>
-                            <TextView
-                                android:id="@+id/tvDashAbsent"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="8dp"
-                                android:textColor="@color/red"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Absent Today"
-                                android:textSize="12sp"
-                                android:alpha="0.7"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Attendance Rate -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_margin="8dp"
-                        style="@style/Widget.Material3.CardView.Elevated"
-                        app:cardCornerRadius="12dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:padding="20dp">
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:src="@android:drawable/ic_menu_sort_by_size"
-                                app:tint="@color/secondary"/>
-                            <TextView
-                                android:id="@+id/tvDashRate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0%"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="8dp"
-                                android:textColor="@color/secondary"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Attendance %"
-                                android:textSize="12sp"
-                                android:alpha="0.7"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                </GridLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGoToAttendance"
-                    style="@style/Widget.Material3.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:padding="16dp"
-                    android:text="Start Marking Attendance"
-                    app:cornerRadius="12dp"
-                    app:icon="@android:drawable/ic_menu_edit" />
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add Student"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="?attr/colorPrimary"
+            app:fabSize="normal"
+            app:layout_anchor="@id/bottomAppBar"
+            app:tint="@color/white" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
