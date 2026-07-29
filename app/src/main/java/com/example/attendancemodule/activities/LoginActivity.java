@@ -32,13 +32,14 @@ public class LoginActivity extends AppCompatActivity {
         MaterialButton btn = findViewById(R.id.btnLogin);
 
         btn.setOnClickListener(v -> {
-            String u = etUser.getText().toString().trim();
-            String p = etPass.getText().toString().trim();
+            String u = etUser.getText() != null ? etUser.getText().toString().trim() : "";
+            String p = etPass.getText() != null ? etPass.getText().toString().trim() : "";
 
             if (ValidationUtils.isEmpty(u) || ValidationUtils.isEmpty(p)) {
                 Toast.makeText(this, "Empty fields", Toast.LENGTH_SHORT).show();
             } else if (db.login(u, p)) {
-                session.createLoginSession(u);
+                String role = db.getUserRole(u);
+                session.createLoginSession(u, role);
                 Toast.makeText(this, "Welcome " + u, Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, DashboardActivity.class));
                 finish();
