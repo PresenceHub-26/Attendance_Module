@@ -5,12 +5,12 @@
         android:id="@+id/action_dark_mode"
         android:title="Toggle Theme"
         app:showAsAction="ifRoom"
-        android:icon="@android:drawable/ic_menu_compass" />
+        android:icon="@drawable/ic_theme" />
     <item
         android:id="@+id/action_reports"
         android:title="View Reports"
         app:showAsAction="ifRoom"
-        android:icon="@android:drawable/ic_menu_agenda" />
+        android:icon="@drawable/ic_reports" />
     <item
         android:id="@+id/action_logout"
         android:title="Logout"

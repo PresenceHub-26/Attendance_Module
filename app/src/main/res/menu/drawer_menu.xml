@@ -4,28 +4,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_dashboard"
-            android:icon="@android:drawable/ic_menu_today"
-            android:title="Dashboard" />
-        <item
-            android:id="@+id/nav_students"
-            android:icon="@android:drawable/ic_menu_myplaces"
-            android:title="Student List" />
-        <item
-            android:id="@+id/nav_attendance"
-            android:icon="@android:drawable/ic_menu_edit"
-            android:title="Mark Attendance" />
-        <item
-            android:id="@+id/nav_reports"
-            android:icon="@android:drawable/ic_menu_agenda"
-            android:title="Attendance Reports" />
+            android:icon="@drawable/ic_dashboard"
+            android:title="Home Dashboard" />
     </group>
 
-    <item android:title="Account">
+    <item android:title="Settings">
         <menu>
             <item
+                android:id="@+id/nav_account"
+                android:icon="@drawable/ic_person"
+                android:title="Manage Account" />
+            <item
                 android:id="@+id/nav_logout"
-                android:icon="@android:drawable/ic_lock_power_off"
-                android:title="Logout" />
+                android:icon="@drawable/ic_logout"
+                android:title="Sign Out" />
         </menu>
     </item>
 
