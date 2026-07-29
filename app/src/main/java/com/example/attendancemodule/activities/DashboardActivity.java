@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.attendancemodule.R;
+import com.example.attendancemodule.fragments.AccountFragment;
 import com.example.attendancemodule.fragments.AttendanceFragment;
 import com.example.attendancemodule.fragments.DashboardFragment;
 import com.example.attendancemodule.fragments.ReportFragment;
@@ -75,6 +76,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+            
+            // Re-enable checkable state when user taps bottom nav
+            int bSize = bottomNav.getMenu().size();
+            for (int i = 0; i < bSize; i++) {
+                bottomNav.getMenu().getItem(i).setCheckable(true);
+            }
+
             if (id == R.id.nav_dashboard) {
                 loadFragment(new DashboardFragment(), "Dashboard");
             } else if (id == R.id.nav_students) {
@@ -127,18 +135,22 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_students) {
-            loadFragment(new StudentListFragment(), "Students");
-            bottomNav.setSelectedItemId(R.id.nav_students);
-        } else if (id == R.id.nav_attendance) {
-            loadFragment(new AttendanceFragment(), "Attendance");
-            bottomNav.setSelectedItemId(R.id.nav_attendance);
-        } else if (id == R.id.nav_reports) {
-            loadFragment(new ReportFragment(), "Reports");
-            bottomNav.setSelectedItemId(R.id.nav_reports);
-        } else if (id == R.id.nav_dashboard) {
+        
+        // Re-enable checkable for bottom nav items just in case
+        int size = bottomNav.getMenu().size();
+        for (int i = 0; i < size; i++) {
+            bottomNav.getMenu().getItem(i).setCheckable(true);
+        }
+
+        if (id == R.id.nav_dashboard) {
             loadFragment(new DashboardFragment(), "Dashboard");
             bottomNav.setSelectedItemId(R.id.nav_dashboard);
+        } else if (id == R.id.nav_account) {
+            loadFragment(new AccountFragment(), "Manage Account");
+            // Uncheck bottom nav items to show we are in a side-menu page
+            for (int i = 0; i < size; i++) {
+                bottomNav.getMenu().getItem(i).setCheckable(false);
+            }
         } else if (id == R.id.nav_logout) {
             logout();
         }
