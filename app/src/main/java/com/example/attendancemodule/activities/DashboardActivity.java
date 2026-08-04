@@ -1,9 +1,14 @@
 package com.example.attendancemodule.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -68,6 +73,32 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     private void setupNavigation() {
         NavigationView nav = findViewById(R.id.nav_view);
         nav.setNavigationItemSelectedListener(this);
+
+        // Update header role text
+        View headerView = nav.getHeaderView(0);
+        if (headerView != null) {
+            TextView tvRole = headerView.findViewById(R.id.tvUserRole);
+            if (tvRole != null) {
+                String role = session.getUserRole();
+                if (role.equalsIgnoreCase("super")) {
+                    tvRole.setText("Super Administrator");
+                } else {
+                    tvRole.setText("Staff Administrator");
+                }
+            }
+        }
+
+        // Color Sign Out item red
+        MenuItem logoutItem = nav.getMenu().findItem(R.id.nav_logout);
+        if (logoutItem != null) {
+            SpannableString s = new SpannableString(logoutItem.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.parseColor("#EF4444")), 0, s.length(), 0);
+            logoutItem.setTitle(s);
+            // Also tint the icon red
+            if (logoutItem.getIcon() != null) {
+                logoutItem.getIcon().setTint(Color.parseColor("#EF4444"));
+            }
+        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, 
                 findViewById(R.id.toolbar), R.string.open_drawer, R.string.close_drawer);
