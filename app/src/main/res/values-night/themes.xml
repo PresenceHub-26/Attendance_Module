@@ -10,7 +10,7 @@
         <item name="colorSecondaryContainer">@color/dark_surface_variant</item>
         <item name="colorOnSecondaryContainer">@color/dark_on_surface</item>
 
-        <item name="android:windowBackground">@color/dark_background</item>
+        <item name="android:windowBackground">@drawable/bg_main_gradient_dark</item>
         <item name="colorSurface">@color/dark_surface</item>
         <item name="colorOnSurface">@color/dark_on_surface</item>
         <item name="colorOnBackground">@color/dark_on_surface</item>
@@ -20,5 +20,7 @@
         <item name="colorSurfaceVariant">@color/dark_surface_variant</item>
 
         <item name="android:statusBarColor">@color/black</item>
+        <item name="glassBackgroundColor">@color/glass_dark</item>
+        <item name="glassCardBackground">@drawable/bg_glass_card_dark</item>
     </style>
 </resources>

@@ -38,6 +38,18 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
+    <!-- Glassmorphism Variants -->
+    <color name="glass_white">#CCFFFFFF</color>
+    <color name="glass_dark">#CC1E293B</color>
+    <color name="glass_border_light">#40FFFFFF</color>
+    <color name="glass_border_dark">#4094A3B8</color>
+
+    <!-- Gradient Colors -->
+    <color name="grad_start">#E0E7FF</color>
+    <color name="grad_end">#F1F5F9</color>
+    <color name="grad_start_dark">#020617</color>
+    <color name="grad_end_dark">#1E1B4B</color>
+
     <!-- Legacy Alias -->
     <color name="green">#10B981</color>
     <color name="red">#EF4444</color>

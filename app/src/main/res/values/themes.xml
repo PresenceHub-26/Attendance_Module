@@ -13,17 +13,23 @@
         <item name="colorOutline">@color/outline</item>
         <item name="colorOnSurfaceVariant">@color/onSurfaceVariant</item>
 
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">@drawable/bg_main_gradient</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/onSurface</item>
         <item name="android:statusBarColor">@color/primary</item>
+        <item name="glassBackgroundColor">@color/glass_white</item>
+        <item name="glassCardBackground">@drawable/bg_glass_card</item>
     </style>
+
+    <attr name="glassBackgroundColor" format="color" />
+    <attr name="glassCardBackground" format="reference" />
 
     <style name="Theme.AttendanceModule" parent="Base.Theme.AttendanceModule" />
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
-        <item name="actionMenuTextColor">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
+        <item name="actionMenuTextColor">?attr/colorOnSurface</item>
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
     </style>
 
     <style name="Widget.AttendanceModule.SearchBar" parent="Widget.Material3.TextInputLayout.OutlinedBox">
@@ -31,9 +37,14 @@
         <item name="boxCornerRadiusTopEnd">28dp</item>
         <item name="boxCornerRadiusBottomStart">28dp</item>
         <item name="boxCornerRadiusBottomEnd">28dp</item>
-        <item name="boxBackgroundColor">?attr/colorSurface</item>
+        <item name="boxBackgroundColor">?attr/glassBackgroundColor</item>
         <item name="hintEnabled">true</item>
         <item name="startIconTint">?attr/colorPrimary</item>
         <item name="boxStrokeColor">?attr/colorOutline</item>
+        <item name="boxStrokeWidth">1dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.AttendanceModule.DrawerItem" parent="">
+        <item name="cornerSize">16dp</item>
     </style>
 </resources>
