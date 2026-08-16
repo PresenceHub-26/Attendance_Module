@@ -150,17 +150,25 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_dark_mode) {
-            int mode = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) 
-                    ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
-            AppCompatDelegate.setDefaultNightMode(mode);
-            session.setThemeMode(mode);
-            recreate();
+            toggleTheme();
+            return true;
+        } else if (item.getItemId() == R.id.action_reports) {
+            loadFragment(new ReportFragment(), "Reports");
+            bottomNav.setSelectedItemId(R.id.nav_reports);
             return true;
         } else if (item.getItemId() == R.id.action_logout) {
             logout();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleTheme() {
+        int mode = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) 
+                ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
+        AppCompatDelegate.setDefaultNightMode(mode);
+        session.setThemeMode(mode);
+        recreate();
     }
 
     @Override
@@ -182,6 +190,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             for (int i = 0; i < size; i++) {
                 bottomNav.getMenu().getItem(i).setCheckable(false);
             }
+        } else if (id == R.id.nav_theme) {
+            toggleTheme();
         } else if (id == R.id.nav_logout) {
             logout();
         }
