@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(this, DashboardActivity.class));
                 finish();
             } else {
-                Toast.makeText(this, "Auth Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
             }
         });
     }
