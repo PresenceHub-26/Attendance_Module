@@ -1,4 +1,4 @@
-# Student Attendance Pro
+# Student Attendance Module
 
 A professional, high-performance, and offline-capable Student Attendance Management System built for Android. This application follows modern architectural standards and provides a premium user experience for educational institutions.
 
@@ -38,7 +38,7 @@ A professional, high-performance, and offline-capable Student Attendance Managem
 
 ## 🛠️ Technical Stack
 - **Language**: Java
-- **Architecture**: Single Activity + Fragments
+- **Architecture**: Multiple Activities + Fragments
 - **Database**: SQLite (Version 2) with relational integrity
 - **UI Components**: Material 3, CoordinatorLayout, BottomAppBar, ChipGroups
 - **Utilities**: Custom PDF Generation, JSON Serialization, FileProvider Security
